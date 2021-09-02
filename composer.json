@@ -1,0 +1,17 @@
+{
+    "name": "meklis/mikrotik-session-checker",
+    "require": {
+        "meklis/routeros-api": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Meklis\\MikrotikSessionChecker\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Max Boyar",
+            "email": "max.boyar.a@gmail.com"
+        }
+    ]
+}
