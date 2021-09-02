@@ -11,10 +11,7 @@ $currentStates = [];
 
 //Load last state
 if(file_exists(__DIR__ . '/last_state.json')) {
-    $state = json_decode(file_get_contents(__DIR__ . '/last_state.json'), true);
-    foreach ($state as $st) {
-        $lastStates["{$st['router']}{$st['remote-address']}"] = $st;
-    }
+    $lastStates = json_decode(file_get_contents(__DIR__ . '/last_state.json'), true);
 }
 
 //Load current states from routerAPI
@@ -40,20 +37,20 @@ foreach ($routers as $router) {
 }
 
 //Compare sessions
-foreach ($currentStates as $cur) {
+foreach ($currentStates as $key=>$cur) {
     if(
         //Session latest exist end state was changed
-        isset($lastStates["{$cur['router']}{$cur['remote-address']}"]) &&
-        $lastStates["{$cur['router']}{$cur['remote-address']}"]['established'] != $cur['established']
+        isset($lastStates[$key]) &&
+        $lastStates[$key]['established'] != $cur['established']
     ) {
         sendNotify(
-            $lastStates["{$cur['router']}{$cur['remote-address']}"],
+            $lastStates[$key],
             $cur,
             $cur['established'] ? 'up' : 'down'
         );
     } elseif (
         //New session detected
-        !isset($lastStates["{$cur['router']}{$cur['remote-address']}"])
+        !isset($lastStates[$key])
     ) {
         sendNotify(
             null,
@@ -71,8 +68,7 @@ foreach ($lastStates as $key=>$lastState) {
 //Save current state
 file_put_contents(
     __DIR__ . '/last_state.json',
-    json_encode(
-        array_values($currentStates),
+    json_encode($currentStates,
         JSON_PRETTY_PRINT
     )
 );
